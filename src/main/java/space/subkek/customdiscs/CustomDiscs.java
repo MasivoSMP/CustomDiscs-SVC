@@ -35,7 +35,11 @@ import space.subkek.customdiscs.event.PlayerHandler;
 import space.subkek.customdiscs.file.CDConfig;
 import space.subkek.customdiscs.file.CDData;
 import space.subkek.customdiscs.language.YamlLanguage;
+import space.subkek.customdiscs.service.LocalDiscService;
+import space.subkek.customdiscs.storage.LocalTrackStorage;
 import space.subkek.customdiscs.util.HTTPRequestUtils;
+import space.subkek.customdiscs.web.UploadTokenService;
+import space.subkek.customdiscs.web.WebServerManager;
 
 import java.io.File;
 
@@ -46,13 +50,19 @@ public class CustomDiscs extends JavaPlugin {
   @Getter
   private final YamlLanguage language = new YamlLanguage();
   @Getter
-  private final File musicData = new File(this.getDataFolder(), "musicdata");
-  @Getter
   private final CDConfig cDConfig = new CDConfig(
     new File(getDataFolder(), "config.yml"));
   @Getter
   private final CDData cDData = new CDData(
     new File(getDataFolder(), "data.yml"));
+  @Getter
+  private final LocalTrackStorage localTrackStorage = new LocalTrackStorage(this);
+  @Getter
+  private final LocalDiscService localDiscService = new LocalDiscService(this);
+  @Getter
+  private final UploadTokenService uploadTokenService = new UploadTokenService();
+  @Getter
+  private final WebServerManager webServerManager = new WebServerManager(this);
   public int discsPlayed = 0;
   private boolean voicechatAddonRegistered = false;
   private boolean libsLoaded = false;
@@ -88,12 +98,19 @@ public class CustomDiscs extends JavaPlugin {
     CommandAPI.onEnable();
 
     if (getDataFolder().mkdir()) CustomDiscs.info("Created plugin data folder");
-    if (musicData.mkdir()) CustomDiscs.info("Created music data folder");
 
     cDConfig.load();
     language.load();
     cDData.load();
     cDData.startAutosave();
+
+    try {
+      localTrackStorage.ensureDirectories();
+    } catch (Throwable e) {
+      CustomDiscs.error("Failed to prepare local track storage: ", e);
+      getServer().getPluginManager().disablePlugin(this);
+      return;
+    }
 
     linkBStats();
 
@@ -101,6 +118,7 @@ public class CustomDiscs extends JavaPlugin {
 
     registerEvents();
     registerCommands();
+    webServerManager.reload();
 
     foliaLib.getScheduler().runAsync(task -> checkUpdates());
 
@@ -131,6 +149,8 @@ public class CustomDiscs extends JavaPlugin {
     if (!libsLoaded) return;
     CommandAPI.onDisable();
     LavaPlayerManagerImpl.getInstance().stopPlayingAll();
+    webServerManager.stop();
+    uploadTokenService.invalidateAll();
 
     cDData.stopAutosave();
     cDData.save();
@@ -209,6 +229,10 @@ public class CustomDiscs extends JavaPlugin {
 
   public static void sendMessage(CommandSender sender, Component component) {
     sender.sendMessage(component);
+  }
+
+  public File getMusicData() {
+    return localTrackStorage.getRootDirectory();
   }
 
   public static void debug(@NotNull String message, Object... format) {

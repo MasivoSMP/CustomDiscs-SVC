@@ -16,6 +16,7 @@ language:
       no-matches: 'Track not found!'
       audio-load: 'Error loading audio!'
       while-playing: 'Error while playing disc!'
+      deleted-disc: 'This web-created disc was deleted and no longer works.'
     file:
       not-found: 'File not found!'
   command:
@@ -34,6 +35,8 @@ language:
       description: '<white>Reloads configuration files.'
       messages:
         successfully: 'Plugin successfully reloaded.'
+        error:
+          storage: 'Failed to prepare the local audio storage.'
     create:
       local:
         syntax: '<dark_aqua>/cd create local <file name> "<disc name>"'
@@ -44,9 +47,28 @@ language:
       messages:
         error:
           not-holding-disc: 'First, take a disc in your hand!'
+          limit-reached: 'You reached your web disc limit ({0}/{1}). Use /cd delete list to remove old entries.'
         name: '<white>Disc name: <dark_aqua>{0}'
         file: '<white>Filename: <dark_aqua>{0}'
         link: '<white>Audio URL: <dark_aqua>{0}'
+    delete:
+      syntax: '<dark_aqua>/cd delete <id>'
+      description: '<white>Deletes one tracked web-created disc by ID.'
+      list:
+        syntax: '<dark_aqua>/cd delete list [page]'
+        description: '<white>Lists your tracked web-created discs.'
+      messages:
+        success: 'Deleted tracked disc <dark_aqua>{0}<white>.'
+        file-missing: 'The source file was already missing: <dark_aqua>{0}'
+        error:
+          invalid-id: 'Invalid disc ID. Use /cd delete list and copy the UUID.'
+          not-found: 'Tracked disc <dark_aqua>{0}<white> was not found.'
+          not-owner: 'You do not own tracked disc <dark_aqua>{0}<white>.'
+          page: 'Invalid page <dark_aqua>{0}<white>. Last page is <dark_aqua>{1}<white>.'
+        list:
+          empty: 'You have no tracked web-created discs.'
+          header: '<white>Tracked discs page <dark_aqua>{0}<white>/<dark_aqua>{1}<white> (total: <dark_aqua>{2}<white>)'
+          entry: '<dark_aqua>{0}<white> | <gray>{1}<white> | <gray>{2}<white> | <gray>{3}'
     distance:
       syntax: '<dark_aqua>/cd distance <radius>'
       description: '<white>Sets the radius for the jukebox.'
@@ -55,6 +77,19 @@ language:
           not-jukebox: 'You didn''t click on the jukebox'
         success: 'The radius of the jukebox was set to {0}.'
         click: 'Click on the jukebox to which you want to set the radius.'
+    web:
+      syntax: '<dark_aqua>/cd web'
+      description: '<white>Built-in web upload tools.'
+      messages:
+        disabled: 'The built-in web upload server is disabled.'
+        error:
+          limit-reached: 'You reached your web disc creation limit.'
+      token:
+        syntax: '<dark_aqua>/cd web token'
+        description: '<white>Generates a one-time upload link for the built-in web UI.'
+        messages:
+          success: '<white>Upload URL: <click:open_url:{0}><hover:show_text:"<dark_aqua>{0}<br><white>Click to open"><aqua>{0}</hover></click>'
+          expiry: '<white>This link expires in <dark_aqua>{0}<white> seconds and can only be used once.'
     help:
       syntax: '<dark_aqua>/cd help'
       description: '<white>Shows command help'

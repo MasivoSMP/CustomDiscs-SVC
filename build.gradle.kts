@@ -80,6 +80,15 @@ paper {
         register("$pluginId.create.remote.soundcloud") {
             default = BukkitPluginDescription.Permission.Default.TRUE
         }
+        register("$pluginId.delete") {
+            default = BukkitPluginDescription.Permission.Default.TRUE
+        }
+        register("$pluginId.web") {
+            default = BukkitPluginDescription.Permission.Default.TRUE
+        }
+        register("$pluginId.web.token") {
+            default = BukkitPluginDescription.Permission.Default.TRUE
+        }
         register("$pluginId.distance") {
             default = BukkitPluginDescription.Permission.Default.TRUE
         }

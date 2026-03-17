@@ -10,6 +10,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import space.subkek.customdiscs.CustomDiscs;
 import space.subkek.customdiscs.LavaPlayerManagerImpl;
@@ -71,6 +72,17 @@ public class PlayerHandler implements Listener {
     if (LegacyUtil.isJukeboxContainsDisc(block)) return;
 
     if (!LegacyUtil.isCustomDisc(event.getItem())) return;
+    String discId = LegacyUtil.getDiscId(event.getItem());
+    if (discId != null && !plugin.getCDData().webDiscExists(discId)) {
+      ItemStack brokenDisc = LegacyUtil.toBrokenDisc(event.getItem());
+      if (event.getHand() == EquipmentSlot.OFF_HAND) {
+        event.getPlayer().getInventory().setItemInOffHand(brokenDisc);
+      } else {
+        event.getPlayer().getInventory().setItemInMainHand(brokenDisc);
+      }
+      CustomDiscs.sendMessage(event.getPlayer(), plugin.getLanguage().PComponent("error.play.deleted-disc"));
+      return;
+    }
 
     CustomDiscs.debug("Jukebox insert by Player event");
 

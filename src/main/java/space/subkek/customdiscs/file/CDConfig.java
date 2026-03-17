@@ -1,7 +1,9 @@
 package space.subkek.customdiscs.file;
 
 import lombok.Getter;
+import org.bukkit.permissions.Permissible;
 import org.simpleyaml.configuration.comments.CommentType;
+import org.simpleyaml.configuration.ConfigurationSection;
 import org.simpleyaml.configuration.file.YamlFile;
 import space.subkek.customdiscs.CustomDiscs;
 import space.subkek.customdiscs.language.Language;
@@ -10,11 +12,15 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 @Getter
 @SuppressWarnings("unused")
 public class CDConfig {
+  private static final Pattern LOCALE_LABEL_PATTERN = Pattern.compile("^[A-Za-z0-9_-]+$");
   private final YamlFile yaml = new YamlFile();
   private final File configFile;
   private String configVersion;
@@ -32,7 +38,7 @@ public class CDConfig {
       }
     }
 
-    configVersion = getString("info.version", "1.5", "Don't change this value");
+    configVersion = getString("info.version", "1.7", "Don't change this value");
     setComment("info",
       "CustomDiscs Configuration",
       "Join our Discord for support: https://discord.gg/eRvwvmEXWz");
@@ -49,6 +55,10 @@ public class CDConfig {
         migrateTo1_4();
       case "1.4":
         migrateTo1_5();
+      case "1.5":
+        migrateTo1_6();
+      case "1.6":
+        migrateTo1_7();
     }
 
     for (Method method : this.getClass().getDeclaredMethods()) {
@@ -120,11 +130,22 @@ public class CDConfig {
   private void globalSettings() {
     locale = getString("global.locale", locale, "Language of the plugin",
       """
-        Supported: %s
-        Unknown languages will be replaced with %s""".formatted(Language.getAllSeparatedComma(), Language.ENGLISH.getLabel()
+        Bundled: %s
+        You can add custom locales by creating plugins/CustomDiscs/language/<locale>.yml.
+        Locale label allows only letters, numbers, '_' and '-'.""".formatted(Language.getAllSeparatedComma()
       )
     );
-    if (!Language.isExists(locale)) locale = Language.ENGLISH.getLabel();
+
+    if (locale == null || locale.isBlank()) {
+      locale = Language.ENGLISH.getLabel();
+    } else {
+      locale = locale.trim();
+      if (!LOCALE_LABEL_PATTERN.matcher(locale).matches()) {
+        CustomDiscs.warn("Invalid locale label '{}'. Falling back to {}", locale, Language.ENGLISH.getLabel());
+        locale = Language.ENGLISH.getLabel();
+      }
+    }
+
     shouldCheckUpdates = getBoolean("global.check-updates", shouldCheckUpdates);
     debug = getBoolean("global.debug", debug);
   }
@@ -154,9 +175,96 @@ public class CDConfig {
       filter — Regex filter for applying custom-model-data to remote disk""");
   }
 
+  private Map<String, Integer> playerCreationLimit = Map.of("default", -1);
+
+  private void playerCreationLimitSettings() {
+    ensureDefault("playerCreationLimit.default", -1,
+      "Per-player limit for tracked web-created discs.",
+      "Use permission tiers with nodes customdiscs.limit.<tier>.",
+      "Example: customdiscs.limit.vip with playerCreationLimit.vip: 20.",
+      "Any value below 0 means unlimited.");
+
+    ConfigurationSection section = yaml.getConfigurationSection("playerCreationLimit");
+    Map<String, Integer> loadedLimits = new LinkedHashMap<>();
+    if (section != null) {
+      for (String key : section.getKeys(false)) {
+        Integer value = parseLimitValue(section.get(key));
+        if (value == null) {
+          CustomDiscs.warn("Ignoring invalid playerCreationLimit.{} value '{}'", key, section.get(key));
+          continue;
+        }
+        loadedLimits.put(key, value);
+      }
+    }
+
+    loadedLimits.putIfAbsent("default", -1);
+    playerCreationLimit = Map.copyOf(loadedLimits);
+  }
+
+  private Integer parseLimitValue(Object rawValue) {
+    if (rawValue == null) return null;
+    if (rawValue instanceof Number number) {
+      return number.intValue();
+    }
+
+    String stringValue = String.valueOf(rawValue).trim();
+    if (stringValue.isEmpty()) return null;
+    try {
+      return Integer.parseInt(stringValue);
+    } catch (NumberFormatException ignored) {
+      return null;
+    }
+  }
+
+  public int resolvePlayerCreationLimit(Permissible permissible) {
+    int effectiveLimit = playerCreationLimit.getOrDefault("default", -1);
+    if (effectiveLimit < 0) {
+      return -1;
+    }
+
+    for (Map.Entry<String, Integer> entry : playerCreationLimit.entrySet()) {
+      String tier = entry.getKey();
+      if ("default".equalsIgnoreCase(tier)) {
+        continue;
+      }
+
+      if (!permissible.hasPermission("customdiscs.limit.%s".formatted(tier))) {
+        continue;
+      }
+
+      int tierLimit = entry.getValue();
+      if (tierLimit < 0) {
+        return -1;
+      }
+
+      effectiveLimit = Math.max(effectiveLimit, tierLimit);
+    }
+
+    return effectiveLimit;
+  }
+
+  private String localStorageDirectory = "musicdata";
+
+  private void storageSettings() {
+    localStorageDirectory = getString("storage.local-directory", localStorageDirectory,
+      "Relative directory under the plugin data folder that stores local audio files.");
+  }
+
   private int musicDiscDistance = 64;
   private float musicDiscVolume = 1f;
   private boolean allowHoppers = false;
+  private List<String> discLoreLines = List.of(
+    "<gray>Song: <white>{song-name}",
+    "<gray>Length: <white>{song-length}",
+    "<gray>Creator: <white>{disc-creator}",
+    "<gray>Created: <white>{created-date}"
+  );
+  private String discLoreDateFormat = "yyyy-MM-dd HH:mm:ss";
+  private String deletedDiscName = "<gray>Broken Disc";
+  private List<String> deletedDiscLoreLines = List.of(
+    "<dark_gray>This disc is broken.",
+    "<gray>Use <white>/cd create<gray> or web upload to create a new one."
+  );
 
   private void discSettings() {
     musicDiscDistance = getInt("disc.distance", musicDiscDistance,
@@ -165,6 +273,18 @@ public class CDConfig {
       "The master volume of music discs from 0-1.", "You can set values like 0.5 for 50% volume."
     ));
     allowHoppers = getBoolean("disc.allow-hoppers", allowHoppers, "Please ensure that in the config/paper-world-defaults.yaml the value hopper.disable-move-event is false");
+    discLoreLines = getStringList("disc.lore.lines", discLoreLines,
+      "Lore template lines used for newly created discs.",
+      "Placeholders: {song-name}, {song-length}, {disc-creator}, {created-date}.",
+      "Supports MiniMessage tags (example: <gray>, <white>).");
+    discLoreDateFormat = getString("disc.lore.date-format", discLoreDateFormat,
+      "Date format used by {created-date}.",
+      "Uses java.time DateTimeFormatter patterns.");
+    deletedDiscName = getString("disc.deleted.name", deletedDiscName,
+      "Display name used when a deleted tracked disc breaks.");
+    deletedDiscLoreLines = getStringList("disc.deleted.lore", deletedDiscLoreLines,
+      "Lore lines used when a deleted tracked disc breaks.",
+      "Supports MiniMessage tags.");
   }
 
   private boolean youtubeOauth2 = false;
@@ -193,6 +313,41 @@ public class CDConfig {
       A method for obtaining streaming via a remote server that emulates a web client.
       Make sure Oauth2 was enabled!
       https://github.com/lavalink-devs/youtube-source?tab=readme-ov-file#using-a-remote-cipher-server""");
+  }
+
+  private boolean webEnabled = false;
+  private String webBindAddress = "127.0.0.1";
+  private int webPort = 8080;
+  private String webPublicUrl = "http://127.0.0.1:8080/";
+  private int webBacklog = 16;
+  private int webMaxUploadSizeMb = 50;
+  private int webTokenTtlSeconds = 600;
+  private int webMaxConcurrentUploads = 2;
+  private String webUploadSubdirectory = "web";
+  private String webUiOverrideDirectory = "webui";
+
+  private void webSettings() {
+    webEnabled = getBoolean("web.enabled", webEnabled,
+      "Enable the built-in HTTP upload server.",
+      "Keep this behind a reverse proxy if exposing it publicly.");
+    webBindAddress = getString("web.bind-address", webBindAddress,
+      "Bind address for the built-in upload server.",
+      "Use 127.0.0.1 when a reverse proxy runs on the same machine.");
+    webPort = getInt("web.port", webPort, "TCP port for the built-in upload server.");
+    webPublicUrl = getString("web.public-url", webPublicUrl,
+      "External URL used in /cd web token messages.",
+      "This can point at a reverse proxy instead of the bind address.");
+    webBacklog = getInt("web.backlog", webBacklog, "Socket backlog for the built-in upload server.");
+    webMaxUploadSizeMb = getInt("web.max-upload-size-mb", webMaxUploadSizeMb,
+      "Maximum allowed upload size in megabytes for the built-in web upload.");
+    webTokenTtlSeconds = getInt("web.token-ttl-seconds", webTokenTtlSeconds,
+      "Lifetime of a generated upload token in seconds.");
+    webMaxConcurrentUploads = getInt("web.max-concurrent-uploads", webMaxConcurrentUploads,
+      "Maximum number of simultaneous uploads handled by the built-in server.");
+    webUploadSubdirectory = getString("web.upload.subdirectory", webUploadSubdirectory,
+      "Relative subdirectory inside storage.local-directory where web uploads are saved.");
+    webUiOverrideDirectory = getString("web.ui.override-directory", webUiOverrideDirectory,
+      "Directory under the plugin data folder that can override bundled web UI files.");
   }
 
   private void setConfigVersion(String version) {
@@ -260,5 +415,13 @@ public class CDConfig {
     removeValue("command.create.remote.youtube.filter");
     removeValue("command.create.remote.soundcloud.filter");
     setConfigVersion("1.5");
+  }
+
+  private void migrateTo1_6() {
+    setConfigVersion("1.6");
+  }
+
+  private void migrateTo1_7() {
+    setConfigVersion("1.7");
   }
 }

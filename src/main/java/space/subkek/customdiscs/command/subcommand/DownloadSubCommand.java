@@ -8,7 +8,6 @@ import org.bukkit.command.CommandSender;
 import space.subkek.customdiscs.CustomDiscs;
 import space.subkek.customdiscs.command.AbstractSubCommand;
 
-import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
@@ -55,21 +54,26 @@ public class DownloadSubCommand extends AbstractSubCommand {
       try {
         URL fileURL = URI.create(getArgumentValue(arguments, "url", String.class)).toURL();
         String filename = getArgumentValue(arguments, "filename", String.class);
+        String normalizedFilename;
 
-        if (filename.contains("../")) {
+        try {
+          normalizedFilename = plugin.getLocalTrackStorage().normalizeRelativePath(filename);
+        } catch (IllegalArgumentException e) {
           CustomDiscs.sendMessage(sender, plugin.getLanguage().PComponent("error.command.invalid-filename"));
           return;
         }
 
-        if (!getFileExtension(filename).equals("wav") && !getFileExtension(filename).equals("mp3") &&
-          !getFileExtension(filename).equals("flac")) {
+        if (!plugin.getLocalTrackStorage().isSupportedAudioFilename(normalizedFilename)) {
           CustomDiscs.sendMessage(sender, plugin.getLanguage().PComponent("error.command.unknown-extension"));
           return;
         }
 
         CustomDiscs.sendMessage(sender, plugin.getLanguage().PComponent("command.download.messages.downloading"));
-        Path downloadPath = Path.of(plugin.getDataFolder().getPath(), "musicdata", filename);
-        File downloadFile = new File(downloadPath.toUri());
+        Path downloadPath = plugin.getLocalTrackStorage().resolveRelativePath(normalizedFilename);
+        Path parent = downloadPath.getParent();
+        if (parent != null) {
+          java.nio.file.Files.createDirectories(parent);
+        }
 
         URLConnection connection = fileURL.openConnection();
 
@@ -82,7 +86,7 @@ public class DownloadSubCommand extends AbstractSubCommand {
           }
         }
 
-        FileUtils.copyURLToFile(fileURL, downloadFile);
+        FileUtils.copyURLToFile(fileURL, downloadPath.toFile());
 
         CustomDiscs.sendMessage(sender, plugin.getLanguage().PComponent("command.download.messages.successfully"));
         CustomDiscs.sendMessage(sender, plugin.getLanguage().PComponent("command.download.messages.create-tooltip",
@@ -92,14 +96,5 @@ public class DownloadSubCommand extends AbstractSubCommand {
         CustomDiscs.sendMessage(sender, plugin.getLanguage().PComponent("command.download.messages.error.while-download"));
       }
     });
-  }
-
-  private String getFileExtension(String s) {
-    int index = s.lastIndexOf(".");
-    if (index > 0) {
-      return s.substring(index + 1);
-    } else {
-      return "";
-    }
   }
 }

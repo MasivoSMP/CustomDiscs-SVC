@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Musica</title>
+  <link href="https://fonts.cdnfonts.com/css/minecraftia" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="/assets/icon.png">
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="header">
+      <div class="brand">
+        <img src="/assets/Masivo_textonly.png" alt="Masivo" class="brand-mark">
+        <div class="brand-text">
+          <p class="eyebrow">Musica</p>
+          <p class="subtitle">Sube tu cancion, revisa las reglas y vincula el disco que tienes en la mano dentro del juego.</p>
+        </div>
+      </div>
+      <span class="pill" id="tokenState">Verificando token...</span>
+    </header>
+
+    <p class="expire" id="expire">Este enlace expira en ...</p>
+
+    <section class="container" id="container">
+      <div class="title-row">
+        <div>
+          <h2 class="title">Subir musica<label id="titlePlayer"></label></h2>
+          <p class="tagline">Arrastra tu MP3 o haz clic para seleccionarlo. Manten un disco de musica en tu mano principal hasta que termine la subida.</p>
+        </div>
+        <span class="chip">MP3</span>
+      </div>
+
+      <label class="field" for="songName">
+        <span>Nombre del disco</span>
+        <input id="songName" type="text" maxlength="80" placeholder="Escribe el nombre del disco">
+      </label>
+
+      <div class="drop-zone" id="dropZone">
+        <div class="cta" id="dropCta">
+          <strong>Suelta tu MP3 aqui</strong><br>
+          o haz clic para elegir un archivo.
+        </div>
+        <div class="audio-preview" id="audioPreview">
+          <div class="preview-heading">Cancion seleccionada</div>
+          <div class="preview-name" id="previewName">No hay archivo seleccionado</div>
+          <div class="preview-meta" id="previewMeta">Solo se permiten archivos MP3.</div>
+          <audio id="audioPlayer" controls preload="metadata"></audio>
+        </div>
+      </div>
+
+      <div class="actions">
+        <input type="file" id="fileInput" accept=".mp3,audio/mpeg" hidden>
+        <button id="uploadBtn" disabled>Subir</button>
+        <p class="hint" id="statusHint">
+          Manten el navegador abierto mientras se completa la subida. La cancion se vincula automaticamente al disco en tu mano principal.<br>
+          <span class="warn">Cualquier subida que rompa las reglas del servidor puede resultar en un ban permanente.</span>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <div class="rules-modal" id="rulesModal" aria-hidden="true">
+    <div class="modal-card">
+      <h3>Debes aceptar las reglas antes de subir musica</h3>
+      <ul class="rules-list">
+        <li>No se permite contenido con discurso de odio, contenido discriminatorio o acoso.</li>
+        <li>No se permiten canciones o sonidos extremadamente fuertes o molestos.</li>
+        <li>No se permite doxxing, informacion privada o contenido relacionado con actividades ilegales.</li>
+        <li>No se permiten subidas destinadas a molestar a otros jugadores del servidor.</li>
+      </ul>
+      <label class="rule-accept">
+        <input type="checkbox" id="rulesCheckbox">
+        Confirmo que mi archivo cumple estas reglas y entiendo que cualquier incumplimiento puede resultar en un ban permanente.
+      </label>
+      <div class="modal-actions">
+        <button class="ghost" id="cancelRules">Cancelar</button>
+        <button id="confirmRules" disabled>Subir ahora</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/assets/app.js"></script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9dd9243d6d88d989',t:'MTc3MzcyMDU2MA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9dd98947bec45322',t:'MTc3MzcyNDY5OA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

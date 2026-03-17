@@ -4,8 +4,6 @@ import dev.jorel.commandapi.arguments.TextArgument;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.CustomModelData;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
@@ -17,9 +15,11 @@ import org.bukkit.persistence.PersistentDataContainer;
 import space.subkek.customdiscs.CustomDiscs;
 import space.subkek.customdiscs.Keys;
 import space.subkek.customdiscs.command.AbstractSubCommand;
+import space.subkek.customdiscs.util.DiscLoreFormatter;
 import space.subkek.customdiscs.util.LegacyUtil;
 import space.subkek.customdiscs.util.RemoteServices;
 
+import java.time.Instant;
 import java.util.List;
 
 public class RemoteCreateSubCommand extends AbstractSubCommand {
@@ -90,12 +90,9 @@ public class RemoteCreateSubCommand extends AbstractSubCommand {
     meta.displayName(plugin.getLanguage().component("disc-name.%s".formatted(service.getId()))
       .decoration(TextDecoration.ITALIC, false));
 
-    final Component customLoreSong = Component.text(customName)
-      .decoration(TextDecoration.ITALIC, false)
-      .color(NamedTextColor.GRAY);
-
     meta.addItemFlags(ItemFlag.values());
-    meta.lore(List.of(customLoreSong));
+    var lore = DiscLoreFormatter.build(plugin.getCDConfig(), customName, player.getName(), Instant.now(), "Unknown");
+    meta.lore(lore.isEmpty() ? null : lore);
 
     int modelData = service.getCustomModelData();
     if (modelData != 0)
@@ -106,6 +103,7 @@ public class RemoteCreateSubCommand extends AbstractSubCommand {
       data.remove(key);
     }
     data.set(Keys.REMOTE_DISC.key(), Keys.REMOTE_DISC.dataType(), url);
+    data.set(Keys.SONG_NAME.key(), Keys.SONG_NAME.dataType(), customName);
 
     player.getInventory().getItemInMainHand().setItemMeta(meta);
 

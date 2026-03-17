@@ -17,6 +17,8 @@ public class CustomDiscsCommand extends CommandAPICommand {
     this.withSubcommand(new ReloadSubCommand());
     this.withSubcommand(new DownloadSubCommand());
     this.withSubcommand(new CreateSubCommand());
+    this.withSubcommand(new DeleteSubCommand());
+    this.withSubcommand(new WebSubCommand());
     this.withSubcommand(new DistanceSubCommand());
 
     this.executes(this::execute);

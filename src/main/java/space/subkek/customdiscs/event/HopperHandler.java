@@ -24,6 +24,11 @@ public class HopperHandler implements Listener {
     if (LegacyUtil.isJukeboxContainsDisc(block)) return;
 
     if (!LegacyUtil.isCustomDisc(event.getItem())) return;
+    String discId = LegacyUtil.getDiscId(event.getItem());
+    if (discId != null && !CustomDiscs.getPlugin().getCDData().webDiscExists(discId)) {
+      event.setItem(LegacyUtil.toBrokenDisc(event.getItem()));
+      return;
+    }
     DiscEntry discEntry = LegacyUtil.getDiscEntry(event.getItem());
 
     CustomDiscInsertEvent playEvent = new CustomDiscInsertEvent(block, null, discEntry);

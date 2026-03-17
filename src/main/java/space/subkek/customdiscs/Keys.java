@@ -6,6 +6,8 @@ import org.bukkit.persistence.PersistentDataType;
 public class Keys {
   public static final Key<String> LOCAL_DISC = Key.create("local", PersistentDataType.STRING);
   public static final Key<String> REMOTE_DISC = Key.create("remote", PersistentDataType.STRING);
+  public static final Key<String> SONG_NAME = Key.create("song_name", PersistentDataType.STRING);
+  public static final Key<String> DISC_ID = Key.create("disc_id", PersistentDataType.STRING);
 
   @Deprecated(forRemoval = true)
   public static final Key<String> LEGACY_LOCAL_DISC = Key.create("customdisc", PersistentDataType.STRING);

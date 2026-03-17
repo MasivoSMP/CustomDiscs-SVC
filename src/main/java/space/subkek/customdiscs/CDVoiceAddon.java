@@ -1,5 +1,11 @@
 package space.subkek.customdiscs;
 
+import java.awt.image.BufferedImage;
+import java.net.URL;
+import java.util.Enumeration;
+
+import javax.imageio.ImageIO;
+
 import de.maxhenkel.voicechat.api.VoicechatApi;
 import de.maxhenkel.voicechat.api.VoicechatPlugin;
 import de.maxhenkel.voicechat.api.VoicechatServerApi;
@@ -7,11 +13,6 @@ import de.maxhenkel.voicechat.api.VolumeCategory;
 import de.maxhenkel.voicechat.api.events.EventRegistration;
 import de.maxhenkel.voicechat.api.events.VoicechatServerStartedEvent;
 import lombok.Getter;
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.net.URL;
-import java.util.Enumeration;
 
 @Getter
 public class CDVoiceAddon implements VoicechatPlugin {
@@ -42,7 +43,7 @@ public class CDVoiceAddon implements VoicechatPlugin {
     registration.registerEvent(VoicechatServerStartedEvent.class, event -> {
       musicDiscsCategory = voicechatApi.volumeCategoryBuilder()
         .setId(MUSIC_DISC_CATEGORY)
-        .setName("Music Discs")
+        .setName("Discos Musicales")
         .setIcon(getMusicDiscIcon())
         .build();
       voicechatApi.registerVolumeCategory(musicDiscsCategory);

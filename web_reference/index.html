@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subida de imagenes</title>
+    <link href="https://fonts.cdnfonts.com/css/minecraftia" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="icon.png">
+    <style>
+        :root {
+            --bg: #070b19;
+            --glass: rgba(255, 255, 255, 0.06);
+            --border: rgba(255, 255, 255, 0.18);
+            --glow: rgba(114, 255, 186, 0.35);
+            --accent: #7cf3ff;
+            --accent-2: #f3cf5a;
+            --text: #eaf4ff;
+            --radius: 22px;
+        }
+        * {
+            box-sizing: border-box;
+            font-family: 'Space Grotesk', 'Minecraftia', sans-serif;
+        }
+        html, body {
+            margin: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--bg) url("background.webp") center/cover no-repeat fixed;
+            color: var(--text);
+            position: relative;
+            isolation: isolate;
+            line-height: 1.6;
+        }
+        .shell {
+            position: relative;
+            z-index: 1;
+            width: min(1100px, 95vw);
+            height: min(90vh, 760px);
+            display: grid;
+            grid-template-rows: auto auto 1fr;
+            gap: 14px;
+            padding: 22px;
+            backdrop-filter: blur(2px);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .brand img {
+            width: 165px;
+            height: auto;
+            filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.35));
+        }
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .eyebrow {
+            font-family: 'Minecraftia', sans-serif;
+            letter-spacing: 0.08em;
+            font-size: 14px;
+            color: var(--accent-2);
+            margin: 0;
+            text-transform: uppercase;
+        }
+        .subtitle {
+            margin: 0;
+            font-size: 15px;
+            color: rgba(234, 244, 255, 0.85);
+        }
+        .pill {
+            border: 1px solid var(--border);
+            padding: 10px 16px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--accent);
+            font-weight: 600;
+            box-shadow: 0 0 28px rgba(124, 243, 255, 0.08);
+            backdrop-filter: blur(10px);
+        }
+        .title {
+            color: var(--text);
+            margin: 0;
+            font-size: 26px;
+            letter-spacing: 0.02em;
+        }
+        .name {
+            color: var(--accent-2);
+        }
+        .expire {
+            margin: 0 0 4px 0;
+            font-size: 14px;
+            color: rgba(234, 244, 255, 0.78);
+        }
+        .container {
+            background: linear-gradient(140deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+            padding: 20px;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            gap: 12px;
+            backdrop-filter: blur(14px);
+            height: 100%;
+        }
+        .title-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+        .tagline {
+            margin: 4px 0 0 0;
+            font-size: 15px;
+            color: rgba(234, 244, 255, 0.78);
+        }
+        .chip {
+            padding: 8px 12px;
+            border-radius: 12px;
+            background: rgba(124, 243, 255, 0.14);
+            border: 1px solid rgba(124, 243, 255, 0.24);
+            color: var(--text);
+            font-size: 13px;
+            box-shadow: 0 0 16px rgba(124, 243, 255, 0.2);
+        }
+        .drop-zone {
+            width: 100%;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+            border: 1px dashed rgba(234, 244, 255, 0.4);
+            border-radius: calc(var(--radius) - 4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            color: var(--text);
+            min-height: 360px;
+            transition: border-color 200ms ease, transform 200ms ease, box-shadow 220ms ease, background 200ms ease;
+        }
+        .drop-zone::after {
+            content: "";
+            position: absolute;
+            inset: -150%;
+            background: conic-gradient(from 90deg, transparent 0deg, rgba(124, 243, 255, 0.18) 90deg, transparent 150deg);
+            transform: rotate(0deg);
+            transition: opacity 200ms ease;
+            opacity: 0;
+            animation: shimmer 8s linear infinite;
+        }
+        .drop-zone:hover {
+            transform: translateY(-2px) scale(1.01);
+            border-color: var(--accent);
+            box-shadow: 0 10px 40px var(--glow), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.05));
+        }
+        .drop-zone:hover::after, .drop-zone.highlight::after {
+            opacity: 1;
+        }
+        .drop-zone.highlight {
+            border-color: var(--accent-2);
+            box-shadow: 0 10px 32px rgba(243, 207, 90, 0.28), 0 0 0 1px rgba(243, 207, 90, 0.18) inset;
+        }
+        .drop-zone .cta {
+            position: relative;
+            z-index: 1;
+            padding: 18px;
+            max-width: 460px;
+            font-size: 17px;
+        }
+        .drop-zone img {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            object-fit: cover;
+            inset: 0;
+            border-radius: inherit;
+            display: block;
+            opacity: 0;
+            transition: opacity 300ms ease;
+            box-shadow: 0 16px 35px rgba(0, 0, 0, 0.35);
+            z-index: 2;
+            pointer-events: none;
+        }
+        .drop-zone img.visible {
+            opacity: 1;
+        }
+        @keyframes shimmer {
+            to { transform: rotate(360deg); }
+        }
+        button {
+            background: linear-gradient(120deg, #48d2ff, #72ffba 60%, #f3cf5a);
+            border: none;
+            padding: 12px 28px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            color: #05101f;
+            border-radius: 14px;
+            box-shadow: 0 15px 35px var(--glow), 0 0 0 1px rgba(255, 255, 255, 0.16) inset;
+            transition: transform 180ms ease, box-shadow 200ms ease, filter 200ms ease;
+        }
+        button:hover:enabled {
+            transform: translateY(-2px) scale(1.015);
+            box-shadow: 0 18px 40px rgba(72, 210, 255, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.3) inset;
+            filter: brightness(1.02);
+        }
+        button:active:enabled {
+            transform: translateY(0px) scale(0.995);
+            box-shadow: 0 10px 24px rgba(72, 210, 255, 0.25);
+        }
+        button:disabled {
+            cursor: not-allowed;
+            filter: grayscale(0.6) brightness(0.7);
+            box-shadow: none;
+            background: linear-gradient(120deg, #1f2738, #1c2333);
+            color: rgba(234, 244, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .hint {
+            margin: 0;
+            font-size: 13px;
+            color: rgba(234, 244, 255, 0.65);
+        }
+        .rules-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.72);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            padding: 16px;
+        }
+        .rules-modal.open {
+            display: flex;
+        }
+        .modal-card {
+            background: linear-gradient(150deg, rgba(20, 29, 48, 0.9), rgba(15, 22, 35, 0.9));
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 18px;
+            padding: 20px;
+            width: min(520px, 95vw);
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+            color: var(--text);
+        }
+        .modal-card h3 {
+            margin: 0 0 12px 0;
+            font-size: 20px;
+            letter-spacing: 0.01em;
+        }
+        .rules-list {
+            padding-left: 18px;
+            margin: 0 0 12px 0;
+            display: grid;
+            gap: 6px;
+        }
+        .rules-list li {
+            font-size: 14px;
+            color: rgba(234, 244, 255, 0.9);
+        }
+        .rule-accept {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 10px 0 16px 0;
+            font-size: 14px;
+            color: rgba(234, 244, 255, 0.85);
+        }
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        button.ghost {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            box-shadow: none;
+        }
+        button.ghost:hover:enabled {
+            box-shadow: 0 10px 26px rgba(0, 0, 0, 0.25);
+            transform: translateY(-1px);
+        }
+        button.timed-progress {
+            position: relative;
+            overflow: hidden;
+            --progress: 0;
+        }
+        button.timed-progress::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(90deg, rgba(72, 210, 255, 0.22), rgba(114, 255, 186, 0.35), rgba(243, 207, 90, 0.32));
+            transform-origin: left;
+            transform: scaleX(var(--progress));
+            transition: transform 80ms linear;
+            pointer-events: none;
+            opacity: 0.95;
+            z-index: 0;
+        }
+        button.timed-progress > * {
+            position: relative;
+            z-index: 1;
+        }
+        .closed-card {
+            width: min(520px, 92vw);
+            background: linear-gradient(140deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+            padding: 28px 24px 30px;
+            text-align: center;
+            backdrop-filter: blur(14px);
+        }
+        .closed-icon {
+            width: 140px;
+            filter: drop-shadow(0 16px 28px rgba(0, 0, 0, 0.45));
+            margin-bottom: 10px;
+        }
+        .success-title {
+            color: #55FFAA;
+            margin: 10px;
+        }
+        .error-title {
+            color: #FF5555;
+            margin: 10px;
+        }
+        .error-detail {
+            color: rgba(255, 255, 255, 0.8);
+            margin: 6px 10px 0;
+            font-size: 15px;
+        }
+        @media screen and (max-width: 900px) {
+            .shell {
+                width: 95vw;
+                height: min(94vh, 760px);
+            }
+            .actions {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            button {
+                width: 100%;
+                justify-content: center;
+                text-align: center;
+            }
+        }
+        @media screen and (max-width: 640px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .brand img {
+                width: 220px;
+            }
+            .drop-zone {
+                min-height: 260px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="shell">
+        <header class="header">
+            <div class="brand">
+                <img src="Masivo_textonly.png" alt="Logo" class="brand-mark">
+                <div class="brand-text">
+                    <p class="eyebrow">Imagenes</p>
+                    <p class="subtitle">Sube tu arte o imagen para generarla en el servidor!</p>
+                </div>
+            </div>
+        </header>
+
+        <p class="expire" id="expire">Este enlace expira en ...</p>
+
+        <div class="container" id="container">
+            <div class="title-row">
+                <div>
+                    <h2 class="title">Subir Imagen<label id="titlePlayer"></label></h2>
+                    <p class="tagline">Arrastra y suelta tu archivo o haz clic para seleccionar. Veras la vista previa al instante.</p>
+                </div>
+                <span class="chip">PNG / JPG / GIF / WEBP</span>
+            </div>
+
+            <div class="drop-zone" id="dropZone">
+                <div class="cta">Arrastra imagen o haz clic para seleccionar.</div>
+                <img id="imagePreview" alt="Vista previa de la imagen" src="">
+            </div>
+
+            <div class="actions">
+                <input type="file" id="fileInput" accept="image/png, image/jpeg, image/gif, image/webp" hidden>
+                <button id="uploadBtn" disabled>Subir</button>
+                <p class="hint">
+                    Manten el navegador abierto mientras se completa la subida. La imagen se enlaza automaticamente en el servidor.<br>
+                    <span style="color: #e74c3c;">Cualquier imagen que viole las reglas del servidor resultara en un ban permanente.</span>
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <div class="rules-modal" id="rulesModal" aria-hidden="true">
+        <div class="modal-card">
+            <h3>Debes aceptar las reglas antes de subir</h3>
+            <ul class="rules-list">
+                <li>No se permite contenido +18 (sexual o pornografico).</li>
+                <li>No se permite contenido violento, gore o grafico.</li>
+                <li>No se permite contenido discriminatorio, ofensivo o de odio.</li>
+                <li>No se permite contenido que muestre informacion personal (doxxing).</li>
+                <li>No se permite contenido relacionado con actividades ilegales.</li>
+            </ul>
+            <label class="rule-accept">
+                <input type="checkbox" id="rulesCheckbox">
+                Confirmo que mi imagen/GIF cumple con todas las reglas mencionadas y entiendo que cualquier incumplimiento puede resultar en un ban permanente
+            </label>
+            <div class="modal-actions">
+                <button class="ghost" id="cancelRules">Cancelar</button>
+                <button id="confirmRules" disabled>Subir ahora</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const user = urlParams.get('user');
+        const uploadId = urlParams.get('id');
+        const player = urlParams.get('player');
+        const expire = urlParams.get('expire');
+
+        function showExpired() {
+            const forPlayer = player ? ` para <span class="name">${player}</span>` : "";
+            document.body.innerHTML = `
+                <div class="closed-card">
+                    <img src="nomelacontes.png" alt="No me la contes" class="closed-icon">
+                    <h2 class="error-title">Este enlace${forPlayer} ha expirado.<br>Crea uno nuevo dentro del juego.</h2>
+                </div>
+            `;
+        }
+        function showError(details) {
+            const forPlayer = player ? ` para <span class="name">${player}</span>` : "";
+            const detailBlock = details ? `<p class="error-detail">${details}</p>` : "";
+            document.body.innerHTML = `
+                <div class="closed-card">
+                    <img src="nomelacontes.png" alt="No me la contes" class="closed-icon">
+                    <h2 class="error-title">Hubo un error al subir${forPlayer}.<br>Crea un enlace nuevo dentro del juego.</h2>
+                    ${detailBlock}
+                </div>
+            `;
+        }
+        function showSuccess() {
+            const forPlayer = player ? ` para <span class="name">${player}</span>` : "";
+            document.body.innerHTML = `
+                <div class="closed-card">
+                    <img src="success.png" alt="wiiii" class="closed-icon">
+                    <h1 class="success-title">Subida exitosa${forPlayer}!<br>Continua en el juego.</h1>
+                </div>
+            `;
+        }
+
+        if (player) {
+            document.getElementById('titlePlayer').innerHTML = ` para <span class="name">${player}</span>`;
+        }
+        if (expire) {
+            const element = document.getElementById('expire');
+            const taskId = setInterval(() => {
+                const now = Date.now();
+                const diff = Math.floor((expire - now) / 1000);
+                if (diff < 0) {
+                    clearInterval(taskId);
+                    showExpired();
+                    return;
+                }
+                const minutes = Math.floor(diff / 60);
+                const seconds = (diff % 60).toString().padStart(2, '0');
+                element.innerHTML = minutes > 0 ? `Este enlace expira en ${minutes}m ${seconds}s` : `Este enlace expira en ${seconds}s`;
+            }, 500);
+        }
+
+        const dropZone = document.getElementById("dropZone");
+        const fileInput = document.getElementById("fileInput");
+        const uploadBtn = document.getElementById("uploadBtn");
+        const imagePreview = document.getElementById("imagePreview");
+        const rulesModal = document.getElementById("rulesModal");
+        const rulesCheckbox = document.getElementById("rulesCheckbox");
+        const confirmRules = document.getElementById("confirmRules");
+        const cancelRules = document.getElementById("cancelRules");
+        const RULES_COOLDOWN_MS = 10000;
+        let rulesReady = false;
+        let rulesTimer = null;
+        let rulesFrame = null;
+        let selectedFile = null;
+
+        dropZone.addEventListener("click", () => fileInput.click());
+        fileInput.addEventListener("change", handleFileSelect);
+        dropZone.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            dropZone.classList.add("highlight");
+        });
+        dropZone.addEventListener("dragleave", () => dropZone.classList.remove("highlight"));
+        dropZone.addEventListener("drop", (e) => {
+            e.preventDefault();
+            dropZone.classList.remove("highlight");
+            if (e.dataTransfer.files.length) {
+                handleFileSelect({ target: { files: e.dataTransfer.files } });
+            }
+        });
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file && ["image/png", "image/jpeg", "image/gif", "image/webp"].includes(file.type)) {
+                selectedFile = file;
+                uploadBtn.disabled = false;
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.classList.add("visible");
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert("Solo se permiten PNG, JPG, GIF o WEBP.");
+                fileInput.value = "";
+                selectedFile = null;
+                uploadBtn.disabled = true;
+                imagePreview.classList.remove("visible");
+                imagePreview.src = "";
+            }
+        }
+
+        uploadBtn.addEventListener("click", () => {
+            if (!selectedFile) return;
+            openRulesModal();
+        });
+
+        rulesCheckbox.addEventListener("change", () => {
+            updateConfirmState();
+        });
+
+        cancelRules.addEventListener("click", () => {
+            closeRulesModal();
+        });
+
+        confirmRules.addEventListener("click", () => {
+            if (!selectedFile) return;
+            confirmRules.disabled = true;
+            closeRulesModal();
+            performUpload();
+        });
+
+        function openRulesModal() {
+            rulesCheckbox.checked = false;
+            rulesReady = false;
+            confirmRules.disabled = true;
+            startRulesCountdown();
+            rulesModal.classList.add("open");
+            rulesModal.setAttribute("aria-hidden", "false");
+        }
+
+        function closeRulesModal() {
+            stopRulesCountdown();
+            rulesModal.classList.remove("open");
+            rulesModal.setAttribute("aria-hidden", "true");
+        }
+
+        function updateConfirmState() {
+            confirmRules.disabled = !(rulesCheckbox.checked && rulesReady);
+        }
+
+        function startRulesCountdown() {
+            stopRulesCountdown();
+            const start = Date.now();
+            setButtonProgress(0);
+            confirmRules.classList.add("timed-progress");
+            const tick = () => {
+                const elapsed = Date.now() - start;
+                const progress = Math.min(elapsed / RULES_COOLDOWN_MS, 1);
+                setButtonProgress(progress);
+                if (progress >= 1) {
+                    rulesReady = true;
+                    updateConfirmState();
+                    rulesFrame = null;
+                    return;
+                }
+                rulesFrame = requestAnimationFrame(tick);
+            };
+            rulesFrame = requestAnimationFrame(tick);
+        }
+
+        function stopRulesCountdown() {
+            if (rulesFrame) {
+                cancelAnimationFrame(rulesFrame);
+                rulesFrame = null;
+            }
+            rulesReady = false;
+            setButtonProgress(0);
+        }
+
+        function setButtonProgress(value) {
+            confirmRules.style.setProperty("--progress", value);
+        }
+
+        async function performUpload() {
+            const formData = new FormData();
+            formData.append("image", selectedFile);
+
+            try {
+                const response = await fetch(`/upload?user=${user}&id=${uploadId}`, {
+                    method: "POST",
+                    body: formData
+                });
+
+                const contentType = response.headers.get("content-type") || "";
+                const isJson = contentType.includes("application/json");
+                const payload = isJson ? await response.json() : await response.text();
+
+                if (!response.ok) {
+                    const detail = response.status === 413
+                        ? "El archivo es demasiado grande para el servidor (413)."
+                        : `Error ${response.status}${payload ? `: ${payload}` : ""}`;
+                    showError(detail);
+                    console.log("Subida fallida:", detail);
+                    return;
+                }
+
+                if (!isJson) {
+                    showError(`Respuesta inesperada del servidor (${contentType}).`);
+                    console.log("Subida fallida: respuesta no JSON", payload);
+                    return;
+                }
+
+                if (payload.hasOwnProperty("error")) {
+                    showError(payload.error);
+                    console.log("Subida fallida: " + payload.error);
+                } else {
+                    showSuccess();
+                    console.log("Subida exitosa: " + payload.message);
+                }
+            } catch (error) {
+                showError(error.message || "Error desconocido.");
+                console.log("Subida fallida: " + error);
+            }
+        }
+    </script>
+</body>
+</html>

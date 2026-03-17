@@ -2,7 +2,10 @@ package space.subkek.customdiscs.util;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.Jukebox;
 import org.bukkit.entity.Player;
@@ -10,15 +13,18 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import space.subkek.customdiscs.CustomDiscs;
 import space.subkek.customdiscs.Keys;
 import space.subkek.customdiscs.api.DiscEntry;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
 
 public class LegacyUtil {
+  private static final MiniMessage MINIMESSAGE = MiniMessage.miniMessage();
+
   public static boolean isJukeboxContainsDisc(@NotNull Block block) {
     Jukebox jukebox = (Jukebox) block.getLocation().getBlock().getState();
     return jukebox.getRecord().getType() != Material.AIR;
@@ -94,8 +100,8 @@ public class LegacyUtil {
 
     String local = data.get(Keys.LOCAL_DISC.key(), Keys.LOCAL_DISC.dataType());
     if (local != null) {
-      File file = new File(CustomDiscs.getPlugin().getMusicData(), local);
-      return new DiscEntry(disc, getSongName(meta), file.getPath(), true);
+      Path file = CustomDiscs.getPlugin().getLocalTrackStorage().resolveRelativePath(local);
+      return new DiscEntry(disc, getSongName(meta), file.toString(), true);
     }
 
     String remote = data.get(Keys.REMOTE_DISC.key(), Keys.REMOTE_DISC.dataType());
@@ -106,7 +112,43 @@ public class LegacyUtil {
     throw new IllegalArgumentException();
   }
 
+  @Nullable
+  public static String getDiscId(ItemStack disc) {
+    ItemMeta meta = getItemMeta(disc);
+    return meta.getPersistentDataContainer().get(Keys.DISC_ID.key(), Keys.DISC_ID.dataType());
+  }
+
+  public static ItemStack toBrokenDisc(ItemStack source) {
+    ItemStack brokenDisc = new ItemStack(source);
+    brokenDisc.setType(Material.MUSIC_DISC_11);
+
+    ItemMeta meta = getItemMeta(brokenDisc);
+    PersistentDataContainer data = meta.getPersistentDataContainer();
+    for (NamespacedKey key : List.copyOf(data.getKeys())) {
+      data.remove(key);
+    }
+
+    String brokenName = CustomDiscs.getPlugin().getCDConfig().getDeletedDiscName();
+    meta.displayName(MINIMESSAGE.deserialize(brokenName).decoration(TextDecoration.ITALIC, false));
+
+    List<Component> brokenLore = CustomDiscs.getPlugin().getCDConfig().getDeletedDiscLoreLines().stream()
+      .map(MINIMESSAGE::deserialize)
+      .map(component -> component.decoration(TextDecoration.ITALIC, false))
+      .toList();
+    meta.lore(brokenLore.isEmpty() ? null : brokenLore);
+
+    brokenDisc.setItemMeta(meta);
+    return brokenDisc;
+  }
+
   private static Component getSongName(ItemMeta meta) {
+    String storedSongName = meta.getPersistentDataContainer().get(Keys.SONG_NAME.key(), Keys.SONG_NAME.dataType());
+    if (storedSongName != null && !storedSongName.isBlank()) {
+      return Component.text(storedSongName)
+        .color(NamedTextColor.GRAY)
+        .decoration(TextDecoration.ITALIC, false);
+    }
+
     List<Component> lore = meta.lore();
     if (lore == null || lore.isEmpty())
       return Component.text("Unknown").color(NamedTextColor.GRAY);

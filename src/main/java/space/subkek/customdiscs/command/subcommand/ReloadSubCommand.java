@@ -40,7 +40,16 @@ public class ReloadSubCommand extends AbstractSubCommand {
     }
 
     plugin.getCDConfig().load();
+    try {
+      plugin.getLocalTrackStorage().ensureDirectories();
+    } catch (Throwable e) {
+      CustomDiscs.error("Failed to prepare local track storage during reload: ", e);
+      CustomDiscs.sendMessage(sender, plugin.getLanguage().PComponent("command.reload.messages.error.storage"));
+      return;
+    }
+
     plugin.getLanguage().load();
+    plugin.getWebServerManager().reload();
     CustomDiscs.sendMessage(sender, plugin.getLanguage().PComponent("command.reload.messages.successfully"));
   }
 }

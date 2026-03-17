@@ -1,68 +1,101 @@
-language:
+﻿language:
   prefix: '<dark_aqua>CustomDiscs <white>- '
   plugin:
     messages:
-      update-available: '<white>Доступна новая версия: <click:open_url:{0}{1}><hover:show_text:"<dark_aqua>{0}{1}<br><white>Нажмите чтоб открыть"><aqua>{1}</hover></click>'
+      update-available: '<white>Ð”Ð¾ÑÑ‚ÑƒÐ¿Ð½Ð° Ð½Ð¾Ð²Ð°Ñ Ð²ÐµÑ€ÑÐ¸Ñ: <click:open_url:{0}{1}><hover:show_text:"<dark_aqua>{0}{1}<br><white>ÐÐ°Ð¶Ð¼Ð¸Ñ‚Ðµ Ñ‡Ñ‚Ð¾Ð± Ð¾Ñ‚ÐºÑ€Ñ‹Ñ‚ÑŒ"><aqua>{1}</hover></click>'
   error:
     command:
-      cant-perform: 'Вы не можете выполнять эту команду!'
-      no-permission: 'Нет прав на выполнение команды'
-      unknown-extension: 'Файл должен иметь расширение <dark_aqua>wav<white>, <dark_aqua>flac <white>, <dark_aqua>mp3<white> и др!'
-      invalid-filename: 'Неверное имя файла!'
-      disc-name-empty: 'Необходимо указать имя диска.'
+      cant-perform: 'Ð’Ñ‹ Ð½Ðµ Ð¼Ð¾Ð¶ÐµÑ‚Ðµ Ð²Ñ‹Ð¿Ð¾Ð»Ð½ÑÑ‚ÑŒ ÑÑ‚Ñƒ ÐºÐ¾Ð¼Ð°Ð½Ð´Ñƒ!'
+      no-permission: 'ÐÐµÑ‚ Ð¿Ñ€Ð°Ð² Ð½Ð° Ð²Ñ‹Ð¿Ð¾Ð»Ð½ÐµÐ½Ð¸Ðµ ÐºÐ¾Ð¼Ð°Ð½Ð´Ñ‹'
+      unknown-extension: 'Ð¤Ð°Ð¹Ð» Ð´Ð¾Ð»Ð¶ÐµÐ½ Ð¸Ð¼ÐµÑ‚ÑŒ Ñ€Ð°ÑÑˆÐ¸Ñ€ÐµÐ½Ð¸Ðµ <dark_aqua>wav<white>, <dark_aqua>flac <white>, <dark_aqua>mp3<white> Ð¸ Ð´Ñ€!'
+      invalid-filename: 'ÐÐµÐ²ÐµÑ€Ð½Ð¾Ðµ Ð¸Ð¼Ñ Ñ„Ð°Ð¹Ð»Ð°!'
+      disc-name-empty: 'ÐÐµÐ¾Ð±Ñ…Ð¾Ð´Ð¸Ð¼Ð¾ ÑƒÐºÐ°Ð·Ð°Ñ‚ÑŒ Ð¸Ð¼Ñ Ð´Ð¸ÑÐºÐ°.'
     play:
-      no-permission: 'Нет прав на воспроизведение такой пластинки'
-      no-matches: 'Трек не найдено!'
-      audio-load: 'Ошибка загрузки аудио!'
-      while-playing: 'Ошибка при воспроизведении диска!'
+      no-permission: 'ÐÐµÑ‚ Ð¿Ñ€Ð°Ð² Ð½Ð° Ð²Ð¾ÑÐ¿Ñ€Ð¾Ð¸Ð·Ð²ÐµÐ´ÐµÐ½Ð¸Ðµ Ñ‚Ð°ÐºÐ¾Ð¹ Ð¿Ð»Ð°ÑÑ‚Ð¸Ð½ÐºÐ¸'
+      no-matches: 'Ð¢Ñ€ÐµÐº Ð½Ðµ Ð½Ð°Ð¹Ð´ÐµÐ½Ð¾!'
+      audio-load: 'ÐžÑˆÐ¸Ð±ÐºÐ° Ð·Ð°Ð³Ñ€ÑƒÐ·ÐºÐ¸ Ð°ÑƒÐ´Ð¸Ð¾!'
+      while-playing: 'ÐžÑˆÐ¸Ð±ÐºÐ° Ð¿Ñ€Ð¸ Ð²Ð¾ÑÐ¿Ñ€Ð¾Ð¸Ð·Ð²ÐµÐ´ÐµÐ½Ð¸Ð¸ Ð´Ð¸ÑÐºÐ°!'
+      deleted-disc: 'Этот web-диск удален и больше не работает.'
     file:
-      not-found: 'Файл не найден.'
+      not-found: 'Ð¤Ð°Ð¹Ð» Ð½Ðµ Ð½Ð°Ð¹Ð´ÐµÐ½.'
   command:
     download:
-      syntax: '<dark_aqua>/cd download "<ссылка>" <имя.расширение>'
-      description: '<white>Загружает файл c музыкой с указанного URL.'
+      syntax: '<dark_aqua>/cd download "<ÑÑÑ‹Ð»ÐºÐ°>" <Ð¸Ð¼Ñ.Ñ€Ð°ÑÑˆÐ¸Ñ€ÐµÐ½Ð¸Ðµ>'
+      description: '<white>Ð—Ð°Ð³Ñ€ÑƒÐ¶Ð°ÐµÑ‚ Ñ„Ð°Ð¹Ð» c Ð¼ÑƒÐ·Ñ‹ÐºÐ¾Ð¹ Ñ ÑƒÐºÐ°Ð·Ð°Ð½Ð½Ð¾Ð³Ð¾ URL.'
       messages:
-        downloading: '<gray>Загрузка файла...'
-        successfully: 'Файл успешно загружен!'
-        create-tooltip: 'Создайте диск, выполнив команду {0}'
+        downloading: '<gray>Ð—Ð°Ð³Ñ€ÑƒÐ·ÐºÐ° Ñ„Ð°Ð¹Ð»Ð°...'
+        successfully: 'Ð¤Ð°Ð¹Ð» ÑƒÑÐ¿ÐµÑˆÐ½Ð¾ Ð·Ð°Ð³Ñ€ÑƒÐ¶ÐµÐ½!'
+        create-tooltip: 'Ð¡Ð¾Ð·Ð´Ð°Ð¹Ñ‚Ðµ Ð´Ð¸ÑÐº, Ð²Ñ‹Ð¿Ð¾Ð»Ð½Ð¸Ð² ÐºÐ¾Ð¼Ð°Ð½Ð´Ñƒ {0}'
         error:
-          while-download: 'При загрузке произошла ошибка.'
-          file-too-large: 'Размер файла превышает {0}мб.'
+          while-download: 'ÐŸÑ€Ð¸ Ð·Ð°Ð³Ñ€ÑƒÐ·ÐºÐµ Ð¿Ñ€Ð¾Ð¸Ð·Ð¾ÑˆÐ»Ð° Ð¾ÑˆÐ¸Ð±ÐºÐ°.'
+          file-too-large: 'Ð Ð°Ð·Ð¼ÐµÑ€ Ñ„Ð°Ð¹Ð»Ð° Ð¿Ñ€ÐµÐ²Ñ‹ÑˆÐ°ÐµÑ‚ {0}Ð¼Ð±.'
     reload:
       syntax: '<dark_aqua>/cd reload'
-      description: '<white>Перезагружает конфигурационные файлы.'
+      description: '<white>ÐŸÐµÑ€ÐµÐ·Ð°Ð³Ñ€ÑƒÐ¶Ð°ÐµÑ‚ ÐºÐ¾Ð½Ñ„Ð¸Ð³ÑƒÑ€Ð°Ñ†Ð¸Ð¾Ð½Ð½Ñ‹Ðµ Ñ„Ð°Ð¹Ð»Ñ‹.'
       messages:
-        successfully: 'Плагин успешно перезагружен.'
+        successfully: 'ÐŸÐ»Ð°Ð³Ð¸Ð½ ÑƒÑÐ¿ÐµÑˆÐ½Ð¾ Ð¿ÐµÑ€ÐµÐ·Ð°Ð³Ñ€ÑƒÐ¶ÐµÐ½.'
     create:
       local:
-        syntax: '<dark_aqua>/cd create local <имя файла> "<имя пластинки>"'
-        description: '<white>Создает диск с ранее скачанной музыкой'
+        syntax: '<dark_aqua>/cd create local <Ð¸Ð¼Ñ Ñ„Ð°Ð¹Ð»Ð°> "<Ð¸Ð¼Ñ Ð¿Ð»Ð°ÑÑ‚Ð¸Ð½ÐºÐ¸>"'
+        description: '<white>Ð¡Ð¾Ð·Ð´Ð°ÐµÑ‚ Ð´Ð¸ÑÐº Ñ Ñ€Ð°Ð½ÐµÐµ ÑÐºÐ°Ñ‡Ð°Ð½Ð½Ð¾Ð¹ Ð¼ÑƒÐ·Ñ‹ÐºÐ¾Ð¹'
       remote:
-        syntax: '<dark_aqua>/cd create remote "<ссылка>" "<имя пластинки>"'
-        description: '<white>Создает диск с музыкой с разных сервисов (YouTube, SoundCloud).'
+        syntax: '<dark_aqua>/cd create remote "<ÑÑÑ‹Ð»ÐºÐ°>" "<Ð¸Ð¼Ñ Ð¿Ð»Ð°ÑÑ‚Ð¸Ð½ÐºÐ¸>"'
+        description: '<white>Ð¡Ð¾Ð·Ð´Ð°ÐµÑ‚ Ð´Ð¸ÑÐº Ñ Ð¼ÑƒÐ·Ñ‹ÐºÐ¾Ð¹ Ñ Ñ€Ð°Ð·Ð½Ñ‹Ñ… ÑÐµÑ€Ð²Ð¸ÑÐ¾Ð² (YouTube, SoundCloud).'
       messages:
         error:
-          not-holding-disc: 'Сначала возьмите диск в руку!'
-        name: '<white>Имя диска: <dark_aqua>{0}'
-        file: '<white>Имя файла: <dark_aqua>{0}'
-        link: '<white>Ссылка на аудио: <dark_aqua>{0}'
+          not-holding-disc: 'Ð¡Ð½Ð°Ñ‡Ð°Ð»Ð° Ð²Ð¾Ð·ÑŒÐ¼Ð¸Ñ‚Ðµ Ð´Ð¸ÑÐº Ð² Ñ€ÑƒÐºÑƒ!'
+          limit-reached: 'Достигнут лимит web-дисков ({0}/{1}). Используйте /cd delete list.'
+        name: '<white>Ð˜Ð¼Ñ Ð´Ð¸ÑÐºÐ°: <dark_aqua>{0}'
+        file: '<white>Ð˜Ð¼Ñ Ñ„Ð°Ð¹Ð»Ð°: <dark_aqua>{0}'
+        link: '<white>Ð¡ÑÑ‹Ð»ÐºÐ° Ð½Ð° Ð°ÑƒÐ´Ð¸Ð¾: <dark_aqua>{0}'
+    delete:
+      syntax: '<dark_aqua>/cd delete <id>'
+      description: '<white>Удаляет отслеживаемый web-диск по ID.'
+      list:
+        syntax: '<dark_aqua>/cd delete list [page]'
+        description: '<white>Показывает ваши отслеживаемые web-диски.'
+      messages:
+        success: 'Удален отслеживаемый диск <dark_aqua>{0}<white>.'
+        file-missing: 'Исходный файл уже отсутствовал: <dark_aqua>{0}'
+        error:
+          invalid-id: 'Неверный ID диска. Используйте /cd delete list и скопируйте UUID.'
+          not-found: 'Отслеживаемый диск <dark_aqua>{0}<white> не найден.'
+          not-owner: 'Вы не владелец отслеживаемого диска <dark_aqua>{0}<white>.'
+          page: 'Неверная страница <dark_aqua>{0}<white>. Последняя страница: <dark_aqua>{1}<white>.'
+        list:
+          empty: 'У вас нет отслеживаемых web-дисков.'
+          header: '<white>Отслеживаемые диски страница <dark_aqua>{0}<white>/<dark_aqua>{1}<white> (всего: <dark_aqua>{2}<white>)'
+          entry: '<dark_aqua>{0}<white> | <gray>{1}<white> | <gray>{2}<white> | <gray>{3}'
     distance:
-      syntax: '<dark_aqua>/cd distance <радиус>'
-      description: '<white>Устанавливает радиус для проигрывателя.'
+      syntax: '<dark_aqua>/cd distance <Ñ€Ð°Ð´Ð¸ÑƒÑ>'
+      description: '<white>Ð£ÑÑ‚Ð°Ð½Ð°Ð²Ð»Ð¸Ð²Ð°ÐµÑ‚ Ñ€Ð°Ð´Ð¸ÑƒÑ Ð´Ð»Ñ Ð¿Ñ€Ð¾Ð¸Ð³Ñ€Ñ‹Ð²Ð°Ñ‚ÐµÐ»Ñ.'
       messages:
         error:
-          not-jukebox: 'Вы кликнули не на проигрыватель!'
-        success: 'Радиус проигрывателя установлен на {0}.'
-        click: 'Кликните на проигрыватель которому хотите установить радиус.'
+          not-jukebox: 'Ð’Ñ‹ ÐºÐ»Ð¸ÐºÐ½ÑƒÐ»Ð¸ Ð½Ðµ Ð½Ð° Ð¿Ñ€Ð¾Ð¸Ð³Ñ€Ñ‹Ð²Ð°Ñ‚ÐµÐ»ÑŒ!'
+        success: 'Ð Ð°Ð´Ð¸ÑƒÑ Ð¿Ñ€Ð¾Ð¸Ð³Ñ€Ñ‹Ð²Ð°Ñ‚ÐµÐ»Ñ ÑƒÑÑ‚Ð°Ð½Ð¾Ð²Ð»ÐµÐ½ Ð½Ð° {0}.'
+        click: 'ÐšÐ»Ð¸ÐºÐ½Ð¸Ñ‚Ðµ Ð½Ð° Ð¿Ñ€Ð¾Ð¸Ð³Ñ€Ñ‹Ð²Ð°Ñ‚ÐµÐ»ÑŒ ÐºÐ¾Ñ‚Ð¾Ñ€Ð¾Ð¼Ñƒ Ñ…Ð¾Ñ‚Ð¸Ñ‚Ðµ ÑƒÑÑ‚Ð°Ð½Ð¾Ð²Ð¸Ñ‚ÑŒ Ñ€Ð°Ð´Ð¸ÑƒÑ.'
+    web:
+      syntax: '<dark_aqua>/cd web'
+      description: '<white>Встроенные инструменты web-загрузки.'
+      messages:
+        disabled: 'Встроенный web-сервер загрузки отключен.'
+        error:
+          limit-reached: 'Достигнут лимит создания web-дисков.'
+      token:
+        syntax: '<dark_aqua>/cd web token'
+        description: '<white>Создает одноразовую ссылку для web-загрузки.'
+        messages:
+          success: '<white>Upload URL: <click:open_url:{0}><hover:show_text:"<dark_aqua>{0}<br><white>Click to open"><aqua>{0}</hover></click>'
+          expiry: '<white>This link expires in <dark_aqua>{0}<white> seconds and can only be used once.'
     help:
       syntax: '<dark_aqua>/cd help'
-      description: '<white>Показывает помощь по командам'
+      description: '<white>ÐŸÐ¾ÐºÐ°Ð·Ñ‹Ð²Ð°ÐµÑ‚ Ð¿Ð¾Ð¼Ð¾Ñ‰ÑŒ Ð¿Ð¾ ÐºÐ¾Ð¼Ð°Ð½Ð´Ð°Ð¼'
       messages:
-        header: '<white>Кастомные Пластинки'
+        header: '<white>ÐšÐ°ÑÑ‚Ð¾Ð¼Ð½Ñ‹Ðµ ÐŸÐ»Ð°ÑÑ‚Ð¸Ð½ÐºÐ¸'
         format: '{0}<white>: {1}'
-        footer: 'Некоторые аргументы должны быть написаны в двойных кавычках "строка"'
+        footer: 'ÐÐµÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ðµ Ð°Ñ€Ð³ÑƒÐ¼ÐµÐ½Ñ‚Ñ‹ Ð´Ð¾Ð»Ð¶Ð½Ñ‹ Ð±Ñ‹Ñ‚ÑŒ Ð½Ð°Ð¿Ð¸ÑÐ°Ð½Ñ‹ Ð² Ð´Ð²Ð¾Ð¹Ð½Ñ‹Ñ… ÐºÐ°Ð²Ñ‹Ñ‡ÐºÐ°Ñ… "ÑÑ‚Ñ€Ð¾ÐºÐ°"'
   disc-name:
-    simple: '<white>Кастомная пластинка'
-    youtube: '<white>YouTube пластинка'
-    soundcloud: '<white>SoundCloud пластинка'
-  now-playing: '<gold>Сейчас играет:'
+    simple: '<white>ÐšÐ°ÑÑ‚Ð¾Ð¼Ð½Ð°Ñ Ð¿Ð»Ð°ÑÑ‚Ð¸Ð½ÐºÐ°'
+    youtube: '<white>YouTube Ð¿Ð»Ð°ÑÑ‚Ð¸Ð½ÐºÐ°'
+    soundcloud: '<white>SoundCloud Ð¿Ð»Ð°ÑÑ‚Ð¸Ð½ÐºÐ°'
+  now-playing: '<gold>Ð¡ÐµÐ¹Ñ‡Ð°Ñ Ð¸Ð³Ñ€Ð°ÐµÑ‚:'
